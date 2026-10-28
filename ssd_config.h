@@ -1,0 +1,91 @@
+// SPDX-License-Identifier: GPL-2.0-only
+
+#ifndef _NVMEVIRT_SSD_CONFIG_H
+#define _NVMEVIRT_SSD_CONFIG_H
+
+#define SSD_TYPE_CONV 1
+
+#define CELL_MODE_TLC 3
+
+#define NR_NAMESPACES 1
+
+#define NS_SSD_TYPE_0 SSD_TYPE_CONV
+#define NS_CAPACITY_0 (0)
+#define NS_SSD_TYPE_1 NS_SSD_TYPE_0
+#define NS_CAPACITY_1 (0)
+#define MDTS (8)
+#define CELL_MODE (CELL_MODE_TLC)
+
+#define SSD_PARTITIONS (1)
+#define NAND_CHANNELS (8)
+#define LUNS_PER_NAND_CH (8)
+
+#define PLNS_PER_LUN (1)
+#define FLASH_PAGE_SIZE KB(16)
+#define ONESHOT_PAGE_SIZE (FLASH_PAGE_SIZE * 1)
+
+#define BLKS_PER_PLN (1024)
+
+#define BLKS_PER_PLN_HYBRID (1280)
+
+#define PROPORTION_TLC_LINE (70)
+#define PROPORTION_SLC_LINE (30)
+#define BLK_SIZE (0)
+static_assert((ONESHOT_PAGE_SIZE % FLASH_PAGE_SIZE) == 0);
+
+#define MAX_CH_XFER_SIZE KB(16)
+#define WRITE_UNIT_SIZE (512)
+
+#define NAND_CHANNEL_BANDWIDTH (800ull)
+#define PCIE_BANDWIDTH (15750ull)
+
+#define NAND_4KB_READ_LATENCY_LSB (66000)
+#define NAND_4KB_READ_LATENCY_MSB (66000)
+#define NAND_4KB_READ_LATENCY_CSB (66000)
+
+#define TLC_READ_LATENCY_LSB (66000)
+#define TLC_READ_LATENCY_MSB (66000)
+#define TLC_READ_LATENCY_CSB (66000)
+
+#define TLC_PROG_LATENCY (730000)
+#define TLC_ERASE_LATENCY (4800000)
+
+#define NAND_READ_LATENCY_LSB TLC_READ_LATENCY_LSB
+#define NAND_READ_LATENCY_MSB TLC_READ_LATENCY_MSB
+#define NAND_READ_LATENCY_CSB TLC_READ_LATENCY_CSB
+#define NAND_PROG_LATENCY     TLC_PROG_LATENCY
+#define NAND_ERASE_LATENCY    TLC_ERASE_LATENCY
+
+#define PSLC_READ_LATENCY (30000)
+#define PSLC_PROG_LATENCY (160000)
+#define PSLC_ERASE_LATENCY (3000000)
+
+#define FW_4KB_READ_LATENCY (21500)
+#define FW_READ_LATENCY (30490)
+#define FW_WBUF_LATENCY0 (4000)
+#define FW_WBUF_LATENCY1 (460)
+#define FW_CH_XFER_LATENCY (0)
+#define OP_AREA_PERCENT (0.10)
+
+#define LBA_BITS (9)
+#define LBA_SIZE (1 << LBA_BITS)
+
+#ifndef PSLC_READ_LATENCY
+#define PSLC_READ_LATENCY  ((uint32_t)(NAND_READ_LATENCY_LSB * 4533ull / 10000))
+#endif
+#ifndef PSLC_PROG_LATENCY
+#define PSLC_PROG_LATENCY  ((uint32_t)(NAND_PROG_LATENCY * 2193ull / 10000))
+#endif
+#ifndef PSLC_ERASE_LATENCY
+#define PSLC_ERASE_LATENCY ((uint32_t)(NAND_ERASE_LATENCY * 625ull / 1000))
+#endif
+
+static const uint32_t ns_ssd_type[] = { NS_SSD_TYPE_0, NS_SSD_TYPE_1 };
+static const uint64_t ns_capacity[] = { NS_CAPACITY_0, NS_CAPACITY_1 };
+
+#define NS_SSD_TYPE(ns) (ns_ssd_type[ns])
+#define NS_CAPACITY(ns) (ns_capacity[ns])
+
+static_assert(NR_NAMESPACES <= 2);
+
+#endif

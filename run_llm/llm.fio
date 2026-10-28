@@ -1,0 +1,33 @@
+# LLM KV cache offloading replay, 4 tenants. Each tenant replays the CHEOPS'25 trace window
+# 0-120 s at 60 % speed (200 s), rotated by a quarter of the window per tenant.
+# Requires the patched fio in ../fio-3.43-abstime (replay_abs_time, replay_idle_sleep) and the
+# iologs from cheops2fio.py (see README.md). Set NVMEV_MNT and TS as in README.md.
+[global]
+ioengine=libaio
+direct=1
+iodepth=32
+cpus_allowed=0,1,2,8,9,10
+group_reporting=0
+percentile_list=50:75:90:95:99:99.9:99.99
+replay_no_stall=0
+replay_time_scale=100
+replay_abs_time=1
+replay_idle_sleep=0
+write_lat_log=results_${TS}/lat
+log_avg_msec=0
+
+[t1]
+read_iolog=cheops25/iolog/t1.blktrace
+replay_redirect=${NVMEV_MNT}/p1/t.dat
+
+[t2]
+read_iolog=cheops25/iolog/t2.blktrace
+replay_redirect=${NVMEV_MNT}/p2/t.dat
+
+[t3]
+read_iolog=cheops25/iolog/t3.blktrace
+replay_redirect=${NVMEV_MNT}/p3/t.dat
+
+[t4]
+read_iolog=cheops25/iolog/t4.blktrace
+replay_redirect=${NVMEV_MNT}/p4/t.dat
